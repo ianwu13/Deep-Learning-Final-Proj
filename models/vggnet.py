@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class vggnet16(nn.module):
-    def __init__(self, num_classes=3):
+    def __init__(self, num_classes=2):
         super(vggnet16, self).__init__()
 
         self.features = nn.Sequential(
