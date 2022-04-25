@@ -13,6 +13,8 @@ from models.vggnet import vggnet16
 ### Training parameters ###
 EPOCHS = 2
 BATCH_SIZE = 4
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 MODEL_PATH = 'vggnet16_animated_or_real.pth'
 
@@ -24,6 +26,7 @@ def train_model():
     ### Creating the model ###
     print('CREATING MODEL')
     model = vggnet16()
+    model.to(DEVICE)
 
     ### Training ###
     print('GETTING DATA')
@@ -42,13 +45,14 @@ def train_model():
 
             # get the inputs; data is a list of [inputs, labels]
             inputs, img_class = data
+            inputs = inputs.to(DEVICE)
             class_map = []
             for i in img_class:
                 if i == 2:
                     class_map.append([0, 1])
                 else:
                     class_map.append([1, 0])
-            class_map = torch.tensor(class_map, dtype=torch.float)
+            class_map = torch.tensor(class_map, dtype=torch.float).to(DEVICE)
 
             # forward + backward + optimize
             outputs = model(inputs)
