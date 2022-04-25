@@ -13,8 +13,8 @@ from models.vggnet import vggnet16
 ### Training parameters ###
 EPOCHS = 2
 BATCH_SIZE = 4
-DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device:', DEVICE)
 
 MODEL_PATH = 'vggnet16_animated_or_real.pth'
 
@@ -47,8 +47,8 @@ def train_model():
             inputs, img_class = data
             inputs = inputs.to(DEVICE)
             class_map = []
-            for i in img_class:
-                if i == 2:
+            for j in img_class:
+                if j == 2:
                     class_map.append([0, 1])
                 else:
                     class_map.append([1, 0])
@@ -61,10 +61,10 @@ def train_model():
             optimizer.step()
             # print statistics
             running_loss += loss.item()
-            if i % 100 == 99:  # print every 100 mini-batches
-                print('[%d, %5d] loss: %.3f' %
-                    (epoch + 1, i + 1, running_loss / 2000))
-                running_loss = 0.0
+            #if i % 100 == 99:  # print every 100 mini-batches
+            print('[%d, %5d] loss: %.15f' %
+                (epoch + 1, i + 1, running_loss / 2000))
+            running_loss = 0.0
 
     ### Save the model ###
     print('SAVING MODEL')
