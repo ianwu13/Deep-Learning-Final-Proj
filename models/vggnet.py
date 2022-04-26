@@ -42,7 +42,7 @@ class vggnet16(nn.Module):
             nn.Linear(4096, 4096),
             nn.ReLU(True),
             nn.Linear(4096, num_classes),
-            nn.Softmax()
+            nn.Softmax(dim=1)
         )
 
     def forward(self, x):

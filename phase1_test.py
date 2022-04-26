@@ -21,40 +21,32 @@ def test_model():
     ### Creating the model ###
     print('CREATING MODEL')
     model = vggnet16()
-    model.load_state_dict(torch.load(MODEL_PATH))
+    # model.load_state_dict(torch.load(MODEL_PATH))
     model.eval()
     model.to(DEVICE)
 
     ### Training ###
     print('GETTING DATA')
     test_data = ImageFolder('./Dataset/Test', transform=DATA_TRANSFORM)
-    test_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+    test_loader = DataLoader(test_data, batch_size=1, shuffle=True, num_workers=0)
 
-    running_loss = 0.0
-    for i, data in enumerate(train_loader, 0):
-        # zero the parameter gradients
-        optimizer.zero_grad()
-
+    count = 0
+    correct_count = 0
+    for i, data in enumerate(test_loader, 0):
         # get the inputs; data is a list of [inputs, labels]
         inputs, img_class = data
         inputs = inputs.to(DEVICE)
-        class_map = []
-        for i in img_class:
-            if i == 2:
-                class_map.append([0, 1])
-            else:
-                class_map.append([1, 0])
-        class_map = torch.tensor(class_map, dtype=torch.float).to(DEVICE)
+        gt_class = 0
+        if img_class[0] == 2:
+            gt_class = 1
+
+        print(gt_class)
 
         # forward + backward + optimize
         outputs = model(inputs)
-
-        # print statistics
-        running_loss += loss.item()
-        if i % 100 == 99:  # print every 100 mini-batches
-            print('[%d, %5d] loss: %.3f' %
-                (epoch + 1, i + 1, running_loss / 2000))
-            running_loss = 0.0
+        if torch.argmax(outputs) == gt_class:
+            correct_count += 1
+        count += 1
 
 
 if __name__ == '__main__':
