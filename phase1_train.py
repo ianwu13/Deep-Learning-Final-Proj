@@ -1,6 +1,3 @@
-import cv2
-import numpy as np
-from sqlalchemy import Float
 import torch
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
@@ -71,10 +68,5 @@ def train_model():
     torch.save(model.state_dict(), MODEL_PATH)
 
 
-def test():
-    pass
-
-
 if __name__ == '__main__':
-    test()
     train_model()
