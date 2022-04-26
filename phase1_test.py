@@ -48,6 +48,8 @@ def test_model():
             correct_count += 1
         count += 1
 
+    print(f'Accuracy: {correct_count/count}')
+
 
 if __name__ == '__main__':
     test_model()
