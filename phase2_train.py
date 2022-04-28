@@ -13,7 +13,7 @@ BATCH_SIZE = 4
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using device:', DEVICE)
 
-MODEL_PATH = 'vggnet16_animated_or_real.pth'
+MODEL_PATH = 'vggnet16_animated_or_real_or_anime.pth'
 
 DATA_TRANSFORM = transforms.Compose([transforms.ToTensor(), transforms.Resize((224,224))])
 
@@ -22,7 +22,7 @@ def train_model():
 
     ### Creating the model ###
     print('CREATING MODEL')
-    model = vggnet16()
+    model = vggnet16(num_classes=3)
     model.to(DEVICE)
 
     ### Training ###
@@ -43,26 +43,20 @@ def train_model():
             # get the inputs; data is a list of [inputs, labels]
             inputs, img_class = data
             inputs = inputs.to(DEVICE)
-            '''
-            class_map = []
-            for j in img_class:
-                if j == 2:
-                    class_map.append([0, 1])
-                else:
-                    class_map.append([1, 0])
-            class_map = torch.tensor(class_map, dtype=torch.float).to(DEVICE)
-            '''
-            
-            tmp = torch.zeros(BATCH_SIZE, 2)
+            tmp = torch.zeros(BATCH_SIZE, 3)
             for x, i in enumerate(img_class):
                 tmp[x, i] = 1
-            class_map = tmp.to(DEVICE)
+            img_class = tmp.to(DEVICE)
 
             # forward + backward + optimize
             outputs = model(inputs)
-            loss = criterion(outputs, class_map)
+            loss = criterion(outputs, img_class)
             loss.backward()
             optimizer.step()
+
+            print(img_class)
+            print(outputs)
+
             # print statistics
             running_loss += loss.item()
             #if i % 100 == 99:  # print every 100 mini-batches

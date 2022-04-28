@@ -11,7 +11,7 @@ from models.vggnet import vggnet16
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
-MODEL_PATH = 'vggnet16_animated_or_real.pth'
+MODEL_PATH = 'vggnet16_animated_or_real_or_anime.pth'
 
 DATA_TRANSFORM = transforms.Compose([transforms.ToTensor(), transforms.Resize((224,224))])
 
@@ -20,7 +20,7 @@ def test_model():
 
     ### Creating the model ###
     print('CREATING MODEL')
-    model = vggnet16()
+    model = vggnet16(num_classes=3)
     model.load_state_dict(torch.load(MODEL_PATH))
     model.eval()
     model.to(DEVICE)
@@ -36,13 +36,11 @@ def test_model():
         # get the inputs; data is a list of [inputs, labels]
         inputs, img_class = data
         inputs = inputs.to(DEVICE)
-        gt_class = 0
-        if img_class[0] == 2:
-            gt_class = 1
+        img_class = img_class.to(DEVICE)
 
         # forward + backward + optimize
         outputs = model(inputs)
-        if torch.argmax(outputs) == gt_class:
+        if torch.argmax(outputs) == img_class:
             correct_count += 1
         count += 1
 
