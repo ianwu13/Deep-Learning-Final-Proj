@@ -43,24 +43,17 @@ def train_model():
             # get the inputs; data is a list of [inputs, labels]
             inputs, img_class = data
             inputs = inputs.to(DEVICE)
-            '''
-            class_map = []
-            for j in img_class:
-                if j == 2:
-                    class_map.append([0, 1])
-                else:
-                    class_map.append([1, 0])
-            class_map = torch.tensor(class_map, dtype=torch.float).to(DEVICE)
-            '''
-            
             tmp = torch.zeros(BATCH_SIZE, 2)
             for x, i in enumerate(img_class):
-                tmp[x, i] = 1
-            class_map = tmp.to(DEVICE)
+                if i == 2:
+                    tmp[x, 1] = 0
+                else:
+                    tmp[x, 0] = 0
+            img_class = tmp.to(DEVICE)
 
             # forward + backward + optimize
             outputs = model(inputs)
-            loss = criterion(outputs, class_map)
+            loss = criterion(outputs, img_class)
             loss.backward()
             optimizer.step()
             # print statistics
