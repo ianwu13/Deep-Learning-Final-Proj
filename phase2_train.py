@@ -31,7 +31,7 @@ def train_model():
     train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
 
     print('TRAINING MODEL')
-    criterion = nn.BCELoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
     for epoch in range(EPOCHS):
@@ -43,10 +43,7 @@ def train_model():
             # get the inputs; data is a list of [inputs, labels]
             inputs, img_class = data
             inputs = inputs.to(DEVICE)
-            tmp = torch.zeros(BATCH_SIZE, 3)
-            for x, i in enumerate(img_class):
-                tmp[x, i] = 1
-            img_class = tmp.to(DEVICE)
+            img_class = img_class.to(DEVICE)
 
             # forward + backward + optimize
             outputs = model(inputs)
