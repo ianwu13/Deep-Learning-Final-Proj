@@ -44,8 +44,7 @@ def train_model():
             # get the inputs; data is a list of [inputs, labels]
             inputs, img_class = data
             inputs = inputs.to(DEVICE)
-            img_class = torch.where(img_class == 2, 1, 0)
-            img_class = img_class.to(DEVICE)
+            img_class = torch.where(img_class == 2, 1, 0).to(DEVICE)
             
             # forward + backward + optimize
             outputs = model(inputs)
