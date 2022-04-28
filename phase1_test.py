@@ -40,8 +40,6 @@ def test_model():
         if img_class[0] == 2:
             gt_class = 1
 
-        print(gt_class)
-
         # forward + backward + optimize
         outputs = model(inputs)
         if torch.argmax(outputs) == gt_class:
