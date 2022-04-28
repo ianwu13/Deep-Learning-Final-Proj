@@ -46,9 +46,9 @@ def train_model():
             tmp = torch.zeros(BATCH_SIZE, 2)
             for x, i in enumerate(img_class):
                 if i == 2:
-                    tmp[x, 1] = 0
+                    tmp[x, 1] = 1
                 else:
-                    tmp[x, 0] = 0
+                    tmp[x, 0] = 1
             img_class = tmp.to(DEVICE)
 
             # forward + backward + optimize
@@ -56,6 +56,7 @@ def train_model():
             loss = criterion(outputs, img_class)
             loss.backward()
             optimizer.step()
+
             # print statistics
             running_loss += loss.item()
             #if i % 100 == 99:  # print every 100 mini-batches
