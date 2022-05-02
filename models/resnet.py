@@ -41,7 +41,7 @@ class resblock(nn.Module):
 
 
 class resnet34(nn.Module):
-    def __init__(self, num_classes = 2, groups = 1, width_per_group = 64):
+    def __init__(self, num_classes = 2):
         super().__init__()
         norm_layer = nn.BatchNorm2d
         self._norm_layer = nn.BatchNorm2d
@@ -50,8 +50,8 @@ class resnet34(nn.Module):
         self.dilation = 1
         # each element in the tuple indicates if we should replace
         # the 2x2 stride with a dilated convolution instead
-        self.groups = groups
-        self.base_width = width_per_group
+        self.groups = 1
+        self.base_width = 64
         self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = norm_layer(self.inplanes)
         self.relu = nn.ReLU(inplace=True)
