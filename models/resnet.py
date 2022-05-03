@@ -5,7 +5,7 @@ import torch.nn as nn
 
 
 class resblock(nn.Module):
-    def __init__(self, inplanes, planes, stride = 1, downsample=None, groups = 1, base_width = 64, dilation = 1):
+    def __init__(self, inplanes, planes, stride = 1, downsample=None, groups = 1, base_width = 64, dilation = 1, norm_layer=nn.BatchNorm2d):
         super().__init__()
         norm_layer = nn.BatchNorm2d
         if groups != 1 or base_width != 64:
