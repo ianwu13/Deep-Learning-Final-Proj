@@ -7,6 +7,9 @@ from torch.utils.data import DataLoader
 
 from models.vggnet import vggnet16
 
+### IMPORTANT ###
+LOAD_PAST_MODEL = True
+
 ### Training parameters ###
 EPOCHS = 2
 BATCH_SIZE = 4
@@ -23,6 +26,8 @@ def train_model():
     ### Creating the model ###
     print('CREATING MODEL')
     model = vggnet16()
+    if LOAD_PAST_MODEL:
+        model.load_state_dict(torch.load(MODEL_PATH))
     model.to(DEVICE)
 
     ### Training ###
