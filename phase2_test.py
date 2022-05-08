@@ -6,12 +6,13 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 from models.vggnet import vggnet16
+from models.resnet import resnet34
 
 ### Training parameters ###
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
-MODEL_PATH = 'vggnet16_animated_or_real_or_anime.pth'
+MODEL_PATH = 'resnet34_animated_or_real_or_anime.pth'
 
 DATA_TRANSFORM = transforms.Compose([transforms.ToTensor(), transforms.Resize((224,224))])
 
@@ -20,7 +21,7 @@ def test_model():
 
     ### Creating the model ###
     print('CREATING MODEL')
-    model = vggnet16(num_classes=3)
+    model = resnet34(num_classes=3)
     model.load_state_dict(torch.load(MODEL_PATH))
     model.eval()
     model.to(DEVICE)
