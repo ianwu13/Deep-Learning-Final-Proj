@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 
 from models.vggnet import vggnet16
 from models.resnet import resnet34
+from models.fpn_resnet import resnet_fpn
 
 ### Training parameters ###
 EPOCHS = 15
@@ -23,7 +24,7 @@ def train_model():
 
     ### Creating the model ###
     print('CREATING MODEL')
-    model = resnet34(num_classes=3)
+    model = resnet_fpn(num_classes=3)
     model.to(DEVICE)
 
     ### Training ###

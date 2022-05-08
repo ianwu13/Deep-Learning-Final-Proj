@@ -108,12 +108,17 @@ class resnet34(nn.Module):
         x = self.maxpool(x)
 
         x = self.layer1(x)
+        print(x.size())
         x = self.layer2(x)
+        print(x.size())
         x = self.layer3(x)
+        print(x.size())
         x = self.layer4(x)
+        print(x.size())
 
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
+        print(x.size())
 
         return x

@@ -57,9 +57,6 @@ class resnet_fpn(nn.Module):
         self.layer3 = self._make_layer(256, 6, stride=2, dilate=False)
         self.layer4 = self._make_layer(512, 3, stride=2, dilate=False)
 
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512, num_classes)
-
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
@@ -67,10 +64,16 @@ class resnet_fpn(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
+        self.upsample = nn.Upsample(scale_factor=2)
         self.decoder1 = nn.Conv2d(512, 256, 3, 1, 1)
         self.decoder2 = nn.Conv2d(512, 128, 3, 1, 1)
         self.decoder3 = nn.Conv2d(256, 64, 3, 1, 1)
         self.decoder4 = nn.Conv2d(128, 64, 3, 1, 1)
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc1 = nn.Linear(64, 32)
+        self.fc2 = nn.Linear(32, 16)
+        self.fc3 = nn.Linear(16, num_classes)
 
     def _make_layer(self, channels, blocks, stride = 1, dilate = False):
         norm_layer = self._norm_layer
@@ -116,16 +119,18 @@ class resnet_fpn(nn.Module):
         x2 = self.layer3(x1)
         x = self.layer4(x2)
 
-        x = self.decoder1(x)
-        x = torch.cat((x, x2))
-        x = self.decoder2(x)
-        x = torch.cat((x, x1))
-        x = self.decoder3(x)
-        x = torch.cat((x, x0))
+        x = self.upsample(self.decoder1(x))
+        x = torch.cat((x, x2), dim=1)
+        x = self.upsample(self.decoder2(x))
+        x = torch.cat((x, x1), dim=1)
+        x = self.upsample(self.decoder3(x))
+        x = torch.cat((x, x0), dim=1)
         x = self.decoder4(x)
 
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
-        x = self.fc(x)
+        x = self.fc1(x)
+        x = self.fc2(x)
+        x = self.fc3(x)
 
         return x
