@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-# Adapted from torchvision implementation of resnet
+# Adapted from torchvision implementation of resnet and FPN
 
 
 class resblock(nn.Module):
@@ -35,7 +35,7 @@ class resblock(nn.Module):
         return out
 
 
-class resnet34(nn.Module):
+class resnet_fpn(nn.Module):
     def __init__(self, num_classes = 2):
         super().__init__()
         norm_layer = nn.BatchNorm2d
@@ -66,6 +66,11 @@ class resnet34(nn.Module):
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
+
+        self.decoder1 = nn.Conv2d(512, 256, 3, 1, 1)
+        self.decoder2 = nn.Conv2d(512, 128, 3, 1, 1)
+        self.decoder3 = nn.Conv2d(256, 64, 3, 1, 1)
+        self.decoder4 = nn.Conv2d(128, 64, 3, 1, 1)
 
     def _make_layer(self, channels, blocks, stride = 1, dilate = False):
         norm_layer = self._norm_layer
@@ -98,7 +103,6 @@ class resnet34(nn.Module):
                     norm_layer=norm_layer,
                 )
             )
-
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -107,10 +111,18 @@ class resnet34(nn.Module):
         x = self.relu(x)
         x = self.maxpool(x)
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
+        x0 = self.layer1(x)
+        x1 = self.layer2(x0)
+        x2 = self.layer3(x1)
+        x = self.layer4(x2)
+
+        x = self.decoder1(x)
+        x = torch.cat((x, x2))
+        x = self.decoder2(x)
+        x = torch.cat((x, x1))
+        x = self.decoder3(x)
+        x = torch.cat((x, x0))
+        x = self.decoder4(x)
 
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
