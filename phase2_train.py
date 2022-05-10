@@ -27,7 +27,7 @@ def train_model():
 
     ### Creating the model ###
     print('CREATING MODEL')
-    model = resnet_fpn()
+    model = resnet_fpn(num_classes=3)
     if LOAD_PAST_MODEL:
         model.load_state_dict(torch.load(MODEL_PATH))
     model.to(DEVICE)
@@ -65,9 +65,9 @@ def train_model():
                 (epoch + 1, i + 1, running_loss / 2000))
             running_loss = 0.0
 
-            print('SAVING MODEL')
-            if epoch%2 == 0:
-                torch.save(model.state_dict(), f'{MODEL_PATH}+{epoch}')
+        print('SAVING MODEL')
+        if epoch%2 == 0:
+            torch.save(model.state_dict(), f'{MODEL_PATH[:-4]}+midway+{epoch}.pth')
             
     ### Save the model ###
     print('SAVING MODEL')
