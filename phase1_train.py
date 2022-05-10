@@ -56,6 +56,7 @@ def train_model():
             outputs = model(inputs)
             loss = criterion(outputs, img_class)
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
 
             # print statistics

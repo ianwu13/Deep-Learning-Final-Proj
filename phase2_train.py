@@ -51,6 +51,7 @@ def train_model():
             outputs = model(inputs)
             loss = criterion(outputs, img_class)
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
 
             # print statistics
@@ -60,6 +61,9 @@ def train_model():
                 (epoch + 1, i + 1, running_loss / 2000))
             running_loss = 0.0
             
+            if epoch%2 == 0:
+                torch.save(model.state_dict(), MODEL_PATH)
+                
     ### Save the model ###
     print('SAVING MODEL')
     torch.save(model.state_dict(), MODEL_PATH)
