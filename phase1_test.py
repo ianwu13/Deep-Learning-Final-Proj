@@ -10,12 +10,13 @@ from sklearn.metrics import confusion_matrix
 from models.vggnet import vggnet16
 from models.resnet import resnet34
 from models.fpn_resnet import resnet_fpn
+from models.fpn_resnet2 import res_fpn_adv_decoder
 
 ### Training parameters ###
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
-MODEL_PATH = 'resnet34_animated_or_real_15_v1.pth'
+MODEL_PATH = 'resnet_fpn_adv_decoder_animated_or_real_15.pth'
 
 DATA_TRANSFORM = transforms.Compose([transforms.ToTensor(), transforms.Resize((224,224))])
 
@@ -24,7 +25,7 @@ def test_model():
 
     ### Creating the model ###
     print('CREATING MODEL')
-    model = resnet_fpn()
+    model = res_fpn_adv_decoder()
     model.load_state_dict(torch.load(MODEL_PATH))
     model.eval()
     model.to(DEVICE)
